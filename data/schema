@@ -1,0 +1,39 @@
+# Go to https://app.quickdatabasediagrams.com/#/schema/YOsMjDlUKUSnxJv198EqJw and preview your changes
+
+User
+-
+UserID PK string
+Name string INDEX
+Email string
+CreatedAt datetime
+
+Event
+-
+EventID PK string
+UserID int FK >- User.UserID
+UsersJoined [User]
+Title string
+Description string
+DateTimeStart datetime
+CreatedAt datetime
+
+Chat
+-
+ChatID PK string
+Messages [Message]
+EventID string FK >- Event.EventID
+LastMessageBody string
+LastMessageUserID string FK >- User.UserID
+
+Message
+-
+MessageID PK string
+Body string
+UserID string FK >- User.UserID
+CreatedAt datetime
+
+Inbox
+-
+InboxID PK string
+UserID string FK >- User.UserID
+Chats [Chat]

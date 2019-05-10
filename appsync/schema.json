@@ -1,0 +1,314 @@
+type Chat {
+	ChatId: ID!
+	UserId: String!
+	EventId: String!
+	Message: String!
+	CreateAt: String
+	nextToken: String
+}
+
+type ChatConnection {
+	items: [Chat]
+	nextToken: String
+}
+
+input CreateChatInput {
+	EventId: String!
+	UserId: String
+	Message: String!
+	CreateAt: String
+	nextToken: String
+}
+
+input CreateEventInput {
+	Title: String!
+	Description: String!
+	DateTimeStart: String!
+	Color: String!
+	CreateAt: String
+	nextToken: String
+}
+
+input CreateEventUserJoinedInput {
+	uid: ID!
+	eid: String!
+}
+
+input CreateUserInput {
+	UserId: String!
+	Name: String!
+	Email: String!
+}
+
+input DeleteChatInput {
+	ChatId: ID!
+}
+
+input DeleteEventInput {
+	EventId: ID!
+}
+
+input DeleteEventUserJoinedInput {
+	uid: ID!
+	eid: String!
+}
+
+input DeleteUserInput {
+	UserId: String!
+}
+
+type Event {
+	EventId: ID!
+	UserId: String!
+	Chats: [Chat]
+	UsersJoined: [User]
+	Title: String!
+	Description: String!
+	Color: String!
+	DateTimeStart: String!
+	CreateAt: String
+	nextToken: String
+}
+
+type EventConnection {
+	items: [Event]
+	nextToken: String
+}
+
+type EventUserJoined {
+	uid: ID!
+	eid: String!
+}
+
+type EventUserJoinedConnection {
+	items: [EventUserJoined]
+	nextToken: String
+}
+
+type Mutation {
+	createUser(input: CreateUserInput!): User
+	updateUser(input: UpdateUserInput!): User
+	deleteUser(input: DeleteUserInput!): User
+	createChat(input: CreateChatInput!): Chat
+	updateChat(input: UpdateChatInput!): Chat
+	deleteChat(input: DeleteChatInput!): Chat
+	createEvent(input: CreateEventInput!): Event
+	updateEvent(input: UpdateEventInput!): Event
+	deleteEvent(input: DeleteEventInput!): Event
+	createEventUserJoined(input: CreateEventUserJoinedInput!): EventUserJoined
+	updateEventUserJoined(input: UpdateEventUserJoinedInput!): EventUserJoined
+	deleteEventUserJoined(input: DeleteEventUserJoinedInput!): EventUserJoined
+}
+
+type Query {
+	getUser(UserId: String!): User
+	listUsers(filter: TableUserFilterInput, limit: Int, nextToken: String): UserConnection
+	getChat(ChatId: ID!): Chat
+	listChats(filter: TableChatFilterInput, limit: Int, nextToken: String): ChatConnection
+	getEvent(EventId: ID!): Event
+	listEvents(filter: TableEventFilterInput, limit: Int, nextToken: String): EventConnection
+	getChatByEventId(EventId: String): [Chat]
+	getEventUserJoined(uid: ID!, eid: String!): EventUserJoined
+	getEventUserJoinedByEventId(eid: String!): [EventUserJoined]
+	listEventUserJoineds(filter: TableEventUserJoinedFilterInput, limit: Int, nextToken: String): EventUserJoinedConnection
+}
+
+type Subscription {
+	onCreateUser(
+		UserId: String,
+		Name: String,
+		Email: String,
+		CreateAt: String
+	): User
+		@aws_subscribe(mutations: ["createUser"])
+	onUpdateUser(
+		UserId: String,
+		Name: String,
+		Email: String,
+		CreateAt: String
+	): User
+		@aws_subscribe(mutations: ["updateUser"])
+	onDeleteUser(
+		UserId: String,
+		Name: String,
+		Email: String,
+		CreateAt: String
+	): User
+		@aws_subscribe(mutations: ["deleteUser"])
+	onCreateChat(EventId: String): Chat
+		@aws_subscribe(mutations: ["createChat"])
+	onUpdateChat(
+		ChatId: ID,
+		UserId: String,
+		EventId: String,
+		Message: String,
+		LastMessageBody: String
+	): Chat
+		@aws_subscribe(mutations: ["updateChat"])
+	onDeleteChat(
+		ChatId: ID,
+		UserId: String,
+		EventId: String,
+		Message: String,
+		LastMessageBody: String
+	): Chat
+		@aws_subscribe(mutations: ["deleteChat"])
+	onCreateEvent(
+		EventId: ID,
+		UserId: String,
+		Title: String,
+		Description: String,
+		DateTimeStart: String
+	): Event
+		@aws_subscribe(mutations: ["createEvent"])
+	onUpdateEvent(
+		EventId: ID,
+		UserId: String,
+		Title: String,
+		Description: String,
+		DateTimeStart: String
+	): Event
+		@aws_subscribe(mutations: ["updateEvent"])
+	onDeleteEvent(
+		EventId: ID,
+		UserId: String,
+		Title: String,
+		Description: String,
+		DateTimeStart: String
+	): Event
+		@aws_subscribe(mutations: ["deleteEvent"])
+	onCreateEventUserJoined(uid: ID, eid: String): EventUserJoined
+		@aws_subscribe(mutations: ["createEventUserJoined"])
+	onUpdateEventUserJoined(uid: ID, eid: String): EventUserJoined
+		@aws_subscribe(mutations: ["updateEventUserJoined"])
+	onDeleteEventUserJoined(uid: ID, eid: String): EventUserJoined
+		@aws_subscribe(mutations: ["deleteEventUserJoined"])
+}
+
+input TableBooleanFilterInput {
+	ne: Boolean
+	eq: Boolean
+}
+
+input TableChatFilterInput {
+	ChatId: TableIDFilterInput
+	UserId: TableStringFilterInput
+	EventId: TableStringFilterInput
+	Message: TableStringFilterInput
+	CreateAt: TableStringFilterInput
+	nextToken: TableStringFilterInput
+}
+
+input TableEventFilterInput {
+	EventId: TableIDFilterInput
+	UserId: TableStringFilterInput
+	Title: TableStringFilterInput
+	Description: TableStringFilterInput
+	DateTimeStart: TableIntFilterInput
+	CreateAt: TableStringFilterInput
+	nextToken: TableStringFilterInput
+}
+
+input TableEventUserJoinedFilterInput {
+	uid: TableIDFilterInput
+	eid: TableStringFilterInput
+}
+
+input TableFloatFilterInput {
+	ne: Float
+	eq: Float
+	le: Float
+	lt: Float
+	ge: Float
+	gt: Float
+	contains: Float
+	notContains: Float
+	between: [Float]
+}
+
+input TableIDFilterInput {
+	ne: ID
+	eq: ID
+	le: ID
+	lt: ID
+	ge: ID
+	gt: ID
+	contains: ID
+	notContains: ID
+	between: [ID]
+	beginsWith: ID
+}
+
+input TableIntFilterInput {
+	ne: Int
+	eq: Int
+	le: Int
+	lt: Int
+	ge: Int
+	gt: Int
+	contains: Int
+	notContains: Int
+	between: [Int]
+}
+
+input TableStringFilterInput {
+	ne: String
+	eq: String
+	le: String
+	lt: String
+	ge: String
+	gt: String
+	contains: String
+	notContains: String
+	between: [String]
+	beginsWith: String
+}
+
+input TableUserFilterInput {
+	UserId: TableStringFilterInput
+	Name: TableStringFilterInput
+	Email: TableStringFilterInput
+	CreateAt: TableStringFilterInput
+}
+
+input UpdateChatInput {
+	ChatId: ID!
+	UserId: String
+	EventId: String
+	Message: String
+	nextToken: String
+}
+
+input UpdateEventInput {
+	EventId: ID!
+	UserId: String
+	Title: String
+	Description: String
+	DateTimeStart: String
+	CreateAt: String
+	nextToken: String
+}
+
+input UpdateEventUserJoinedInput {
+	uid: ID!
+	eid: String!
+}
+
+input UpdateUserInput {
+	UserId: String!
+	Name: String
+	Email: String
+	CreateAt: String
+}
+
+type User {
+	UserId: String!
+	Name: String!
+	Email: String!
+	CreateAt: String
+}
+
+type UserConnection {
+	items: [User]
+	nextToken: String
+}

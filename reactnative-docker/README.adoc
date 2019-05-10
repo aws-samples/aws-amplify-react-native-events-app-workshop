@@ -1,0 +1,19 @@
+### Build React-Native development container
+
+```
+cd reactnative-docker
+docker build -t reactnative-expo .
+```
+
+You should see:
+```
+...
+...
+Successfully built e0566a1b1262
+Successfully tagged reactnative-expo:latest
+
+```
+Verify it:
+```
+docker images
+```
