@@ -116,20 +116,20 @@ Your code directory should look like so now:
 Let's create a new AWS CodeCommit Repository for our application. Run this in a AWS Cloud9 Terminal (not your docker environment):
 
 ```
-aws codecommit create-repository --repository-name jiojiome-mobile-app
+aws codecommit create-repository --repository-name eventapp-mobile-app
 ```
 
 Output of the command: 
 ```
 {
     "repositoryMetadata": {
-        "repositoryName": "jiojiome-mobile-app", 
-        "cloneUrlSsh": "ssh://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/jiojiome-mobile-app", 
+        "repositoryName": "eventapp-mobile-app", 
+        "cloneUrlSsh": "ssh://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/eventapp-mobile-app", 
         "lastModifiedDate": 1534061690.066, 
         "repositoryId": "87b338a8-0726-45e3-9ba4-6a73e4f406f1", 
-        "cloneUrlHttp": "https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/jiojiome-mobile-app", 
+        "cloneUrlHttp": "https://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/eventapp-mobile-app", 
         "creationDate": 1534061690.066, 
-        "Arn": "arn:aws:codecommit:ap-southeast-1:XXXXXXXXXXXX:jiojiome-mobile-app", 
+        "Arn": "arn:aws:codecommit:ap-southeast-1:XXXXXXXXXXXX:eventapp-mobile-app", 
         "accountId": "XXXXXXXXXXX"
     }
 }
@@ -159,7 +159,7 @@ Run this in a AWS Cloud9 Terminal (not your docker environment) to push the code
 ```
 git init
 git commit -m "first commit"
-git remote add origin ssh://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/jiojiome-mobile-app
+git remote add origin ssh://git-codecommit.ap-southeast-1.amazonaws.com/v1/repos/eventapp-mobile-app
 git push -u origin master
 ```
 
