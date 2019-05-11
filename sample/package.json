@@ -1,0 +1,25 @@
+{
+  "main": "node_modules/expo/AppEntry.js",
+  "scripts": {
+    "start": "expo start",
+    "android": "expo start --android",
+    "ios": "expo start --ios",
+    "eject": "expo eject"
+  },
+  "dependencies": {
+    "aws-amplify": "^1.1.22",
+    "aws-amplify-react-native": "^2.1.8",
+    "expo": "^32.0.0",
+    "moment": "^2.24.0",
+    "native-base": "^2.12.1",
+    "react": "16.5.0",
+    "react-native": "https://github.com/expo/react-native/archive/sdk-32.0.0.tar.gz",
+    "react-native-gifted-chat": "^0.7.2",
+    "react-native-modal-datetime-picker": "^6.1.0",
+    "react-navigation": "^3.5.1"
+  },
+  "devDependencies": {
+    "babel-preset-expo": "^5.0.0"
+  },
+  "private": true
+}

@@ -1,0 +1,32 @@
+type User @model {
+  id: ID!
+  name: String
+  email: String!
+  phone_number: String
+  username: String
+  events: [Event] @connection(name: "UserEvents")
+  chats: [Chat] @connection(name: "UserChats")
+  followers: [Follower] @connection(name: "UserFollowers")
+}
+type Event @model {
+  id: ID!
+  title: String!
+  description: String
+  status: String
+  user: User @connection(name: "UserEvents")
+  chats: [Chat] @connection(name: "EventChats")
+  followers: [Follower] @connection(name: "EventFollowers")
+  startAt: Int
+}
+type Chat @model {
+  id: ID!
+  content: String!
+  user: User @connection(name: "UserChats")
+  event: Event @connection(name: "EventChats")
+  createdAt: String
+}
+type Follower @model {
+  id: ID!
+  user: User @connection(name: "UserFollowers")
+  event: Event @connection(name: "EventFollowers")
+}
