@@ -21,7 +21,7 @@ At this point, you will see either GraphQL or REST. In this lab, we will create 
   REST 
 ```
 
-Enter the API name: `jiojiome`
+Enter the API name: `eventapp`
 
 At this point, choose `Amazon Cognito User Pool` as your autorization type for this API.
 
@@ -37,7 +37,7 @@ Select 'Y' for guided schema creation and edit the schema now. You should see:
 ? What best describes your project: Single object with fields (e.g., “Todo” with ID, name, description)
 ? Do you want to edit the schema now? (Y/n) 
 ? Do you want to edit the schema now? Yes
-Please manually edit the file created at /code/amplify/backend/api/jiojiome/schema.graphql
+Please manually edit the file created at /code/amplify/backend/api/eventapp/schema.graphql
 ```
 
 Go to the schema file and start editing.
@@ -100,7 +100,7 @@ You should see:
 | Category | Resource name   | Operation | Provider plugin   |
 | -------- | --------------- | --------- | ----------------- |
 | Auth     | cognito742b133c | No Change | awscloudformation |
-| Api      | jiojiome        | Create    | awscloudformation |
+| Api      | eventapp        | Create    | awscloudformation |
 ```
 
 Let's now push your changes to the AWS and it will take a few minutes to complete.
