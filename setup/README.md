@@ -133,7 +133,8 @@ cd watchman && git checkout v4.9.0 && ./autogen.sh && \
 ./configure && make -j4 && make install  && cd / && rm -rf /tmp/watchman
 
 # RUN npm set progress=false && \
-RUN npm install -g create-react-native-app expo-cli @aws-amplify/cli
+RUN npm install --unsafe-perm -g expo-cli 
+RUN npm install -g create-react-native-app @aws-amplify/cli
 
 # CHANGE the UID accordingly, follow the step at the note section.
 RUN useradd -m -u 501 -s /bin/bash ec2-user
