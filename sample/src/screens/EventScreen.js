@@ -25,6 +25,7 @@ export default function EventScreen(props) {
   const { event, currentUser } = props.navigation.state.params;
   let [followers, setFollowers] = useState([]);
   let [follower, setFollower] = useState([]);
+  const getFollowersQuery = ``;
 
   renderFollowers = () => {
     if (followers.length > 0)
@@ -110,32 +111,6 @@ export default function EventScreen(props) {
       };
       fetchFollowers();
     }, [setFollowers]);
-
-    const getFollowersQuery = `query GetEvent(
-      $id: ID!
-      $nextToken: String
-      $limit: Int
-    ) {
-      getEvent(id: $id) {
-        id
-        followers (
-          limit: $limit
-          sortDirection: DESC
-          nextToken: $nextToken
-        ) {
-          items  {
-            id
-            user {
-              id
-              name
-              username
-            }
-          }
-          nextToken
-        }
-      }
-    }
-    `;
   };
 
   leaveEvent = follower => {
