@@ -1,42 +1,61 @@
-import React from 'react';
-import { AppLoading, Font } from 'expo';
-import { Container } from 'native-base';
+import { AppLoading } from 'expo';
+import * as Font from 'expo-font';
+import React, { useState } from 'react';
+import { Ionicons } from '@expo/vector-icons';
+
+import AppNavigator from './src/navigation/AppNavigator';
+import NavigationService from './src/utils/NavigationService';
+
+import Amplify from 'aws-amplify';
+import awsconfig from './aws-exports';
 import { withAuthenticator } from 'aws-amplify-react-native';
 
-import RootNavigator from './src/Tabs';
+Amplify.configure(awsconfig);
 
-import { initializeAmplify } from './src/aws.js';
-initializeAmplify();
+function App(props) {
+  const [isLoadingComplete, setLoadingComplete] = useState(false);
 
-class App extends React.Component {
-  state = {
-    isReady: false
-  };
-
-  componentWillMount() {
-    this.loadFonts();
-  }
-
-  async loadFonts() {
-    await Font.loadAsync({
-      Roboto: require("native-base/Fonts/Roboto.ttf"),
-      Roboto_medium: require("native-base/Fonts/Roboto_medium.ttf"),
-      Ionicons: require("native-base/Fonts/Ionicons.ttf")
-    });
-    this.setState({ isReady: true });
-  }
-
-  render() {
-    if (!this.state.isReady) {
-      return <AppLoading />;
-    }
-
+  if (!isLoadingComplete && !props.skipLoadingScreen) {
     return (
-      <Container>
-        <RootNavigator />
-      </Container>
-    )
+      <AppLoading
+        startAsync={loadResourcesAsync}
+        onError={handleLoadingError}
+        onFinish={() => handleFinishLoading(setLoadingComplete)}
+      />
+    );
+  } else {
+    return (
+      <AppNavigator
+        ref={navigatorRef => {
+          NavigationService.setTopLevelNavigator(navigatorRef);
+        }}
+      />
+    );
   }
 }
 
 export default withAuthenticator(App);
+
+async function loadResourcesAsync() {
+  await Promise.all([
+    Font.loadAsync({
+      // This is the font that we are using for our tab bar
+      ...Ionicons.font,
+      // We include SpaceMono because we use it in HomeScreen.js. Feel free to
+      // remove this if you are not using it in your app
+      // 'space-mono': require('./src/assets/fonts/SpaceMono-Regular.ttf')
+      Roboto: require('./node_modules/native-base/Fonts/Roboto.ttf'),
+      Roboto_medium: require('./node_modules/native-base/Fonts/Roboto_medium.ttf')
+    })
+  ]);
+}
+
+function handleLoadingError(error) {
+  // In this case, you might want to report the error to your error reporting
+  // service, for example Sentry
+  console.warn(error);
+}
+
+function handleFinishLoading(setLoadingComplete) {
+  setLoadingComplete(true);
+}

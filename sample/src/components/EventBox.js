@@ -1,0 +1,38 @@
+import React from 'react';
+import { Body, Text, Card, CardItem } from 'native-base';
+
+import moment from 'moment';
+
+import NavigationService from '../utils/NavigationService';
+
+export default function EventBox(props) {
+  const { event, currentUser, isClickable } = props;
+
+  let color = 'black';
+  const today = new Date().getTime() / 1000;
+  const oneday = 60 * 24 * 60;
+  if (event.startAt - today > 7 * oneday) color = 'green';
+  else if (event.startAt - today < oneday) color = 'red';
+  // else if (event.startAt - newDate().getTime() < 7 * 60 * 24) setColor('green');
+
+  return (
+    <Card key={event.id}>
+      <CardItem style={{ padding: 1, backgroundColor: color }}></CardItem>
+      <CardItem
+        button
+        onPress={() => {
+          if (isClickable)
+            NavigationService.navigate('Event', { event, currentUser });
+        }}
+      >
+        <Body>
+          <Text style={{ fontWeight: 'bold' }}>{event.title}</Text>
+          <Text style={{ marginTop: 5 }}>{event.description}</Text>
+          <Text style={{ marginTop: 5 }}>
+            {moment.unix(event.startAt).calendar()}
+          </Text>
+        </Body>
+      </CardItem>
+    </Card>
+  );
+}
