@@ -8,6 +8,7 @@ AWS AppSync automatically updates the data in web and mobile applications in rea
 
 - [Create AppSync API](#create-appsync-api)
 - [Edit your GraphQL Schema](#edit-your-graphql-schema)
+- [Enable Analytics to your mobile app](#enable-analytics-to-your-mobile-apps)
 
 ## Create AppSync API
 
@@ -159,6 +160,51 @@ Now, you can wait for the resources in the terminal.
 ```
 
 Until you see the success message in the following:
+
+```
+✔ All resources are updated in the cloud
+```
+
+## Enable Analytics to your mobile app
+
+Before you move to the next lab, you are going to add **Analytics** to increase your app visibility & understand your users better.
+
+```
+amplify add analytics
+```
+
+Enter your app name below:
+
+```
+? Provide your pinpoint resource name: (eventapp)
+```
+
+Enter 'Y' to enable Analytics for any users. You would want to do this because you can further analyze where are the dropoffs for customer registration / sign up process.
+
+```
+Adding analytics would add the Auth category to the project if not already added.
+? Apps need authorization to send analytics events. Do you want to allow guests and unauthenticated users to send analyti
+cs events? (we recommend you allow this when getting started) (Y/n)
+```
+
+Now, you should be able to see the following:
+
+```
+Successfully added auth resource locally.
+Successfully added resource eventapp locally
+
+Some next steps:
+"amplify push" builds all of your local backend resources and provisions them in the cloud
+"amplify publish" builds all your local backend and front-end resources (if you have hosting category added) and provisions them in the cloud
+```
+
+And now, do another amplify push to add new AWS resource.
+
+```
+amplify push
+```
+
+Until you see the success message in the following, you can proceed to the next lab.
 
 ```
 ✔ All resources are updated in the cloud
