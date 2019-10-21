@@ -41,9 +41,9 @@ Setup AppSync & update GraphQL schema.
 
 Run your React Native App on your Mobile Device!
 
-<!-- ## [Lab 5](cicd/)
-CI/CD for your React Native App
- -->
+## [Lab 5](pinpoint/)
+
+Add Analytics and reach out to your users at real-time!
 
 ## # Pro Tips
 
