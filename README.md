@@ -45,6 +45,17 @@ Run your React Native App on your Mobile Device!
 CI/CD for your React Native App
  -->
 
+## # Pro Tips
+
+Before moving to the next module, a brief word on working with the Amplify command line tools. Some operations present a multiple choice option such as the one shown below. In these cases, you can use the space bar to select one or more of the options before pressing the enter button to move to the next question. Selected choices will have a filled circle instead of an outline.
+
+```bash
+? Pick one or more of the following options.
+❯◯ not selected 1
+ ◉ selected
+ ◯ not selected 2
+```
+
 ## Clean up
 
 If you ever need to clean up your AWS account, you just need to run the following command in your AWS Cloud9 environment:
