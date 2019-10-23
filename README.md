@@ -11,9 +11,9 @@ Our application allow users to create meetups and also to join existing meetups.
 ### Screenshots
 
 <p float="left">
-<img src="img/jjm-1.jpg" width="33%" alt="events list">
-<img src="img/jjm-2.jpg" width="33%">
-<img src="img/jjm-3.jpg" width="33%">
+<img src="img/app-1.png" width="33%" alt="events list">
+<img src="img/app-2.png" width="33%">
+<img src="img/app-3.png" width="33%">
 </p>
 
 The data model will consist of:
