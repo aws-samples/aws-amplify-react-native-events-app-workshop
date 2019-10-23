@@ -58,4 +58,6 @@ Follow following instructions to get this application to work on your phone.
 
 Notice that some part of the app might not be working. You are not complete the following in order to make this app work:
 
-Complete the graphql query events at `src/screens/EventScreen.js`
+1. Complete the graphql query events at `src/screens/EventScreen.js`
+
+2. Refer to the original architecture diagram in the main page and figure out how to add Elasticsearch capabilities via AppSync Schema [Annotations](https://aws-amplify.github.io/docs/js/api#using-graphql-transformers).
