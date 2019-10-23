@@ -35,7 +35,7 @@ Run AWS Amplify CLI & setup Auth in AWS Cloud9.
 
 ## [Lab 3](appsync/)
 
-Setup AppSync & update GraphQL schema.
+Setup AppSync, update GraphQL schema & add Analytics.
 
 ## [Lab 4](app/)
 
@@ -43,7 +43,7 @@ Run your React Native App on your Mobile Device!
 
 ## [Lab 5](pinpoint/)
 
-Add Analytics and reach out to your users at real-time!
+Explore Amazon Pinpoint (Analytics) and reach out to your users at real-time!
 
 ## # Pro Tips
 
