@@ -153,8 +153,14 @@ Note: find out what is your cloud UID by doing `echo $UID`. By default (at this 
 7. Save it by pressing `Command + S` keys for Mac. Or `Control + S` keys for Windows. You can see **All Changes Saved** sign at the top of the Cloud9 Window.
    ![AWS Cloud9 Save Changes](images/aws-cloud-save-changes.jpg)
 
-8. Go back to the lower window. Key in `docker build -t reactnative-expo .` and press **Enter** key. Notice this command ends with a dot.
-   ![AWS Cloud9 Docker Command](images/aws-cloud9-docker-command.jpg)
+8. Go back to the lower window. Key in the following commands (with a dot):
+
+```
+docker build -t reactnative-expo .
+```
+
+and press **Enter** key. Notice this command ends with a dot.
+![AWS Cloud9 Docker Command](images/aws-cloud9-docker-command.jpg)
 
 9. This will take _a few minutes_. You might see some `npm warnings` in red around optional dependencies. You can ignore them.
    ![AWS Cloud9 Docker Build](images/aws-cloud9-docker-build.jpg)
