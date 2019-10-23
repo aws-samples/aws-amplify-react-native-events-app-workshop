@@ -209,3 +209,5 @@ Until you see the success message in the following, you can proceed to the next 
 ```
 ✔ All resources are updated in the cloud
 ```
+
+Now that you are ready to launch the mobile app in your mobile phone. Remember to install Expo in your mobile phone first before running the next [lab](../app/README.md).
