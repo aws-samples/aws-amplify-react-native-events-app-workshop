@@ -168,6 +168,12 @@ and press **Enter** key. Notice this command ends with a dot.
 10. You can verify your image was successfully built by typing `docker images`. You should see a `reactnative-expo` image.
     ![AWS Cloud9 Docker Images](images/aws-cloud9-docker-images.jpg)
 
+**OPTIONAL STEP** if you are facing error, reboot the EC2 instance by entering the following command as it may be due to harddisk full. A reboot will allow the OS to take up new space in the harddisk:
+
+```
+sudo reboot
+```
+
 11. Start the React Native Docker using this image with the command below.
     This step allows us to use AWS Cloud9 to be the IDE for our React Native project under the directory `~/environment/rn` while having a Docker container execute the React Native and Expo development server. The 2 TCP ports (19000, 19001) allows our mobile device to communicate with the React Native/Expo container.
 
