@@ -129,7 +129,7 @@ AWS Cloud9 environment comes pre-installed with Docker.
 6. Copy the following commands and paste inside the file. Take a few minutes to review this file. We are also installing the AWS mobile CLI.
 
 ```
-FROM node:11.1.0
+FROM node:12
 RUN mkdir -p /code
 WORKDIR /code
 
