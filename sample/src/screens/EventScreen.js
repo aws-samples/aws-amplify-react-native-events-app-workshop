@@ -25,6 +25,8 @@ export default function EventScreen(props) {
   const { event, currentUser } = props.navigation.state.params;
   let [followers, setFollowers] = useState([]);
   let [follower, setFollower] = useState([]);
+
+  // TODO: insert your graphql query here to get all followers
   const getFollowersQuery = ``;
 
   renderFollowers = () => {
