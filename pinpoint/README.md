@@ -1,7 +1,7 @@
 # Amazon Pinpoint
 
 - [Explore Analytics in Amazon Pinpoint](#explore-analytics-in-amazon-pinpoint)
-- [Create a segment to target specific users](#create-segment-to-target-specific-users)
+- [Create segment to target specific users](#create-segment-to-target-specific-users)
 - [Enable your email channel](#enable-email-channel)
 - [Create a camaign for a specific event](#create-a-campaign-for-a-specific-event)
 
@@ -17,7 +17,7 @@
 
 ![Analytics Overview](images/overview.png)
 
-## Create a Segment to target specific users
+## Create Segment to target specific users
 
 Let's say I want to send an email to all the users who created their first event to thank and remind them what to do. You can do that by first having them in a Segment.
 
