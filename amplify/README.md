@@ -60,7 +60,7 @@ Press Enter to continue
 Specify the AWS Region
 ? region:  ap-southeast-1
 Specify the username of the new IAM user:
-? user name:  amplify-user
+? user name:  amplify-<YOUR NAME>-user
 Complete the user creation using the AWS console
 https://console.aws.amazon.com/iam/home?region=undefined#/users$new?step=final&accessKey&userNames=amplify-user&permissionType=policies&policies=arn:aws:iam::aws:policy%2FAdministratorAccess
 Press Enter to continue
@@ -69,7 +69,7 @@ Enter the access key of the newly created user:
 ? accessKeyId:  XXXXXX**********
 ? secretAccessKey:  XXXXXXXXXXX********************
 This would update/create the AWS Profile in your local machine
-? Profile Name:  default
+? Profile Name:  <YOUR NAME>
 
 Successfully set up the new user.
 
