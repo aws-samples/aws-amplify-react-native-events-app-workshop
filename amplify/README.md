@@ -35,7 +35,7 @@ Plugin scan successful
 Note: It is recommended to run this command from the root of your app directory
 ? Enter a name for the project eventapp
 ? Enter a name for the environment dev
-? Choose your default editor: Visual Studio Code
+? Choose your default editor: None
 ? Choose the type of app that you're building javascript
 Please tell us about your project
 ? What javascript framework are you using react-native
