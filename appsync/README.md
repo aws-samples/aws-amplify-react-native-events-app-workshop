@@ -147,7 +147,7 @@ GraphQL schema compiled successfully.
 Edit your schema at /Volumes/Data/Git/aws-amplify-app/amplify/backend/api/awsamplifyapp/schema.graphql or place .graphql files in a directory at /Volumes/Data/Git/aws-amplify-app/amplify/backend/api/awsamplifyapp/schema
 ```
 
-Since we are providing you the app, you do not need to generate code for your GraphQL API. Enter `Y` and continue.
+Since we are providing you the app, you will need to generate code for your GraphQL API. Enter `Y` and continue.
 
 ```
 ? Do you want to generate code for your newly created GraphQL API (Y/n) Y
