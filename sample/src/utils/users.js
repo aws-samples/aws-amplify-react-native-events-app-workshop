@@ -97,6 +97,7 @@ async function updateEndpoint(
       console.log('wrong channel ', type);
       break;
   }
+  return result;
 }
 
 exports.getCognitoUser = getCognitoUser;

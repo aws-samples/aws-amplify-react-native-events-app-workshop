@@ -1,15 +1,14 @@
 {
   "expo": {
-    "name": "Eventapp",
-    "slug": "event-app",
+    "name": "AWS Event App",
+    "slug": "aws-event-app",
     "privacy": "public",
-    "sdkVersion": "35.0.0",
     "platforms": ["ios", "android", "web"],
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./src/assets/images/icon.png",
+    "icon": "./assets/icon.png",
     "splash": {
-      "image": "./src/assets/images/splash.png",
+      "image": "./assets/splash.png",
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },

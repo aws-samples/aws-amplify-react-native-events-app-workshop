@@ -1,61 +1,109 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { AppState } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import AppContainer from './src/AppContainer';
 import { AppLoading } from 'expo';
 import * as Font from 'expo-font';
-import React, { useState } from 'react';
 import { Ionicons } from '@expo/vector-icons';
 
-import AppNavigator from './src/navigation/AppNavigator';
-import NavigationService from './src/utils/NavigationService';
-
-import Amplify from 'aws-amplify';
+import Amplify from '@aws-amplify/core';
 import awsconfig from './aws-exports';
 import { withAuthenticator } from 'aws-amplify-react-native';
+import Analytics from '@aws-amplify/analytics';
 
 Amplify.configure(awsconfig);
 
-function App(props) {
-  const [isLoadingComplete, setLoadingComplete] = useState(false);
-
-  if (!isLoadingComplete && !props.skipLoadingScreen) {
-    return (
-      <AppLoading
-        startAsync={loadResourcesAsync}
-        onError={handleLoadingError}
-        onFinish={() => handleFinishLoading(setLoadingComplete)}
-      />
-    );
-  } else {
-    return (
-      <AppNavigator
-        ref={navigatorRef => {
-          NavigationService.setTopLevelNavigator(navigatorRef);
-        }}
-      />
-    );
+const getActiveRouteName = (state) => {
+  const route = state.routes[state.index];
+  if (route.state) {
+    return getActiveRouteName(route.state);
   }
+  return route.name;
+};
+
+const loadFonts = async () => {
+  // for native-base
+  await Font.loadAsync({
+    Roboto: require('native-base/Fonts/Roboto.ttf'),
+    Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+    ...Ionicons.font,
+  });
+};
+
+function App() {
+  const [appState, setAppState] = useState(AppState.currentState);
+  const [isLoading, setIsLoading] = useState(true);
+  const navigationRef = useRef();
+  const routeNameRef = useRef();
+
+  useEffect(() => {
+    loadFonts();
+    setIsLoading(!isLoading);
+
+    // app state
+    AppState.addEventListener('change', _handleAppStateChange);
+
+    // this is for analytics
+    const currentState = navigationRef.current.getRootState();
+    if (currentState) routeNameRef.current = getActiveRouteName(currentState);
+
+    return () => {
+      AppState.removeEventListener('change', _handleAppStateChange);
+    };
+  }, []);
+
+  const _handleAppStateChange = (nextAppState) => {
+    if (appState.match(/active|background/) && nextAppState === 'active') {
+      console.log('App has come to the foreground!', routeNameRef.current);
+      Analytics.record({
+        name: 'Navigate',
+        attributes: {
+          background: false,
+        },
+      });
+    } else if (
+      appState.match(/active|background/) &&
+      nextAppState === 'background'
+    ) {
+      console.log('App went to the background!');
+      Analytics.record({
+        name: 'Navigate',
+        attributes: {
+          background: true,
+        },
+      });
+    }
+    // console.log('from:', appState, 'to:', nextAppState);
+    setAppState(nextAppState);
+  };
+
+  return (
+    <NavigationContainer
+      ref={navigationRef}
+      onStateChange={(state) => {
+        const previousRouteName = routeNameRef.current;
+        if (state) {
+          const currentRouteName = getActiveRouteName(state);
+
+          if (
+            !previousRouteName !== currentRouteName &&
+            appState === 'active'
+          ) {
+            console.log('tracking current screen:', currentRouteName);
+            Analytics.record({
+              name: 'Navigate',
+              attributes: {
+                screen: currentRouteName,
+              },
+            });
+          }
+          routeNameRef.current = currentRouteName;
+        }
+      }}
+    >
+      {isLoading ? <AppLoading /> : <AppContainer />}
+    </NavigationContainer>
+  );
 }
 
 export default withAuthenticator(App);
-
-async function loadResourcesAsync() {
-  await Promise.all([
-    Font.loadAsync({
-      // This is the font that we are using for our tab bar
-      ...Ionicons.font,
-      // We include SpaceMono because we use it in HomeScreen.js. Feel free to
-      // remove this if you are not using it in your app
-      // 'space-mono': require('./src/assets/fonts/SpaceMono-Regular.ttf')
-      Roboto: require('./node_modules/native-base/Fonts/Roboto.ttf'),
-      Roboto_medium: require('./node_modules/native-base/Fonts/Roboto_medium.ttf')
-    })
-  ]);
-}
-
-function handleLoadingError(error) {
-  // In this case, you might want to report the error to your error reporting
-  // service, for example Sentry
-  console.warn(error);
-}
-
-function handleFinishLoading(setLoadingComplete) {
-  setLoadingComplete(true);
-}

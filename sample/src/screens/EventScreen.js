@@ -11,10 +11,10 @@ import {
   Left,
   Right,
   List,
-  ListItem
+  ListItem,
+  Header,
+  Title,
 } from 'native-base';
-
-import NavigationService from '../utils/NavigationService';
 
 import { API, graphqlOperation } from 'aws-amplify';
 import { createFollower, deleteFollower } from '../graphql/mutations';
@@ -22,16 +22,42 @@ import { createFollower, deleteFollower } from '../graphql/mutations';
 import EventBox from '../components/EventBox';
 
 export default function EventScreen(props) {
-  const { event, currentUser } = props.navigation.state.params;
+  let { event, currentUser } = props.route.params;
+  let { navigation } = props;
   let [followers, setFollowers] = useState([]);
   let [follower, setFollower] = useState([]);
+  let [pending, setPending] = useState(false);
 
-  // TODO: insert your graphql query here to get all followers
-  const getFollowersQuery = ``;
+  // TODO: workshop, insert your graphql query here to get all followers
+  const getFollowersQuery = `query GetEvent(
+    $id: ID!
+    $nextToken: String
+    $limit: Int
+  ) {
+    getEvent(id: $id) {
+      id
+      followers (
+        limit: $limit
+        sortDirection: DESC
+        nextToken: $nextToken
+      ) {
+        items  {
+          id
+          user {
+            id
+            name
+            username
+          }
+        }
+        nextToken
+      }
+    }
+  }
+  `;
 
   renderFollowers = () => {
     if (followers.length > 0)
-      return followers.map(follower => (
+      return followers.map((follower) => (
         <ListItem key={follower.id}>
           <Text>
             {follower.user.name} (@{follower.user.username})
@@ -77,34 +103,37 @@ export default function EventScreen(props) {
   };
 
   joinEvent = (event, currentUser) => {
-    createNewFollower = async () => {
-      const input = {
-        input: {
-          followerUserId: currentUser.attributes.sub,
-          followerEventId: event.id
+    if (!pending) {
+      createNewFollower = async () => {
+        const input = {
+          input: {
+            followerUserId: currentUser.attributes.sub,
+            followerEventId: event.id,
+          },
+        };
+
+        let result = null;
+        try {
+          result = await API.graphql(graphqlOperation(createFollower, input));
+          const newFollower = result.data.createFollower;
+          followers.push(newFollower);
+          setFollower(newFollower);
+          setFollowers(followers);
+        } catch (e) {
+          console.log(e);
         }
+        setPending(false);
       };
-
-      let result = null;
-      try {
-        result = await API.graphql(graphqlOperation(createFollower, input));
-        const newFollower = result.data.createFollower;
-        followers.push(newFollower);
-        setFollower(newFollower);
-        setFollowers(followers);
-      } catch (e) {
-        console.log(e);
-      }
-    };
-
-    createNewFollower();
+      setPending(true);
+      createNewFollower();
+    }
   };
 
-  getAllFollowers = eventId => {
+  getAllFollowers = (eventId) => {
     const input = {
       id: eventId,
       nextToken: null,
-      limit: 10
+      limit: 10,
     };
     useEffect(() => {
       const fetchFollowers = async () => {
@@ -115,30 +144,34 @@ export default function EventScreen(props) {
     }, [setFollowers]);
   };
 
-  leaveEvent = follower => {
-    deleteExistingFollower = async () => {
-      const input = {
-        input: {
-          id: follower.id
+  leaveEvent = (follower) => {
+    if (!pending) {
+      deleteExistingFollower = async () => {
+        const input = {
+          input: {
+            id: follower.id,
+          },
+        };
+
+        let result = null;
+        try {
+          result = await API.graphql(graphqlOperation(deleteFollower, input));
+          var newFollowers = followers.filter(function (item, index, arr) {
+            return item.id !== follower.id;
+          });
+          setFollowers(newFollowers);
+          setFollower([]);
+        } catch (e) {
+          console.log(e);
         }
+
+        setPending(false);
+        return result.data;
       };
 
-      let result = null;
-      try {
-        result = await API.graphql(graphqlOperation(deleteFollower, input));
-        var newFollowers = followers.filter(function(item, index, arr) {
-          return item.id !== follower.id;
-        });
-        setFollowers(newFollowers);
-        setFollower([]);
-      } catch (e) {
-        console.log(e);
-      }
-
-      return result.data;
-    };
-
-    deleteExistingFollower();
+      setPending(true);
+      deleteExistingFollower();
+    }
   };
 
   getAllFollowers(event.id);
@@ -146,14 +179,35 @@ export default function EventScreen(props) {
   useEffect(() => {
     if (followers.length > 0) {
       const findFollower = followers.find(
-        element => element.user.id === currentUser.attributes.sub
+        (element) => element.user.id === currentUser.attributes.sub
       );
       if (findFollower) setFollower(findFollower);
     }
   }, [followers]);
 
+  const enterChatRoom = (props) => {
+    const { event, currentUser } = props;
+    navigation.navigate('Chat', { event, currentUser });
+  };
+
   return (
     <Container>
+      <Header>
+        <Left>
+          <Button transparent onPress={() => navigation.goBack()}>
+            <Icon name='ios-arrow-back' style={{ padding: 10 }}></Icon>
+            <Text>Back</Text>
+          </Button>
+        </Left>
+        <Body>
+          <Title>Event Details</Title>
+        </Body>
+        <Right>
+          <Button transparent onPress={() => enterChatRoom(props.route.params)}>
+            <Icon name='chatbubbles'></Icon>
+          </Button>
+        </Right>
+      </Header>
       <Content padder>
         <EventBox isClickable={false} event={event} />
         <List>
@@ -167,17 +221,3 @@ export default function EventScreen(props) {
     </Container>
   );
 }
-
-function enterChatRoom(props) {
-  const { event, currentUser } = props;
-  NavigationService.navigate('Chat', { event, currentUser });
-}
-
-EventScreen.navigationOptions = ({ navigation }) => ({
-  headerTitle: 'Event Details',
-  headerRight: (
-    <Button transparent onPress={() => enterChatRoom(navigation.state.params)}>
-      <Icon name='chatbubbles'></Icon>
-    </Button>
-  )
-});

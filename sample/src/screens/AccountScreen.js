@@ -13,7 +13,11 @@ import {
   Label,
   View,
   Toast,
-  Root
+  Root,
+  Left,
+  Right,
+  Header,
+  Title,
 } from 'native-base';
 import { Auth } from 'aws-amplify';
 
@@ -32,23 +36,23 @@ export default function AccountScreen() {
     const updatedAttributes = {
       given_name: firstName.value,
       family_name: lastName.value,
-      phone_number: phoneNumber.value
+      phone_number: phoneNumber.value,
     };
     let result = await Auth.updateUserAttributes(user, updatedAttributes).catch(
-      err => {
+      (err) => {
         console.log(err);
       }
     );
     Toast.show({
       text: `${result}!`,
       buttonText: 'Okay',
-      position: 'top'
+      position: 'top',
     });
 
     if (result === 'SUCCESS') {
       updateDatabaseUser(user.username, {
         ...attributes,
-        ...updatedAttributes
+        ...updatedAttributes,
       });
     }
     return result;
@@ -56,6 +60,19 @@ export default function AccountScreen() {
 
   return (
     <Container>
+      <Header>
+        <Left />
+        <Body>
+          <Title>
+            <Text>Account</Text>
+          </Title>
+        </Body>
+        <Right>
+          <Button transparent onPress={() => updateParticulars()}>
+            <Text>Save</Text>
+          </Button>
+        </Right>
+      </Header>
       <Content>
         <Root>
           <List>
@@ -65,7 +82,7 @@ export default function AccountScreen() {
                   flexDirection: 'column',
                   alignContent: 'center',
                   flex: 1,
-                  alignItems: 'center'
+                  alignItems: 'center',
                 }}
               >
                 <View style={{}}>
@@ -79,7 +96,7 @@ export default function AccountScreen() {
                     style={{
                       textAlign: 'center',
                       paddingTop: 10,
-                      fontWeight: 'bold'
+                      fontWeight: 'bold',
                     }}
                   >
                     @{user.username}
@@ -88,7 +105,7 @@ export default function AccountScreen() {
                     note
                     style={{
                       textAlign: 'center',
-                      padding: 5
+                      padding: 5,
                     }}
                   >
                     {attributes ? attributes.email : ''}
@@ -120,7 +137,7 @@ export default function AccountScreen() {
                 </Item>
               </Body>
             </ListItem>
-            <ListItem>
+            <ListItem last>
               <Body>
                 <Button transparent onPress={() => Auth.signOut()}>
                   <Text>Sign Out</Text>
@@ -133,12 +150,3 @@ export default function AccountScreen() {
     </Container>
   );
 }
-
-AccountScreen.navigationOptions = {
-  headerTitle: 'Account',
-  headerRight: (
-    <Button transparent onPress={() => updateParticulars()}>
-      <Text>Save</Text>
-    </Button>
-  )
-};

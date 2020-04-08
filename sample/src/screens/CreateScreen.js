@@ -9,10 +9,17 @@ import {
   Text,
   List,
   ListItem,
-  Label
+  Label,
+  Header,
+  Left,
+  Right,
+  Title,
+  Form,
 } from 'native-base';
 
-import DateTimePicker from 'react-native-modal-datetime-picker';
+import DateTimePickerModal from 'react-native-modal-datetime-picker';
+
+import moment from 'moment';
 
 import { getCognitoUser } from '../utils/users';
 import { useFormInput } from '../utils/forms';
@@ -21,27 +28,47 @@ import { API, graphqlOperation } from 'aws-amplify';
 import Analytics from '@aws-amplify/analytics';
 import { createEvent } from '../graphql/mutations';
 
-import NavigationService from '../utils/NavigationService';
-
 export default function CreateScreen(props) {
+  const [datetime, setDatetime] = useState();
+  const [mode, setMode] = useState('datetime');
+  const [show, setShow] = useState(true);
+  const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
+
+  const showDatePicker = () => {
+    setDatePickerVisibility(true);
+  };
+
+  const hideDatePicker = () => {
+    setDatePickerVisibility(false);
+  };
+
+  const handleConfirm = (datetime) => {
+    setDatetime(datetime);
+    hideDatePicker();
+  };
+
   let user = getCognitoUser();
   const { attributes } = user;
 
   let title = useFormInput();
   let description = useFormInput();
-  const [dateTimeStart, setDateTimeStart] = useState(new Date().toUTCString());
-  const [datePickerIsVisible, setDatePickerIsVisible] = useState(false);
 
-  createNewEvent = async () => {
+  const createNewEvent = async () => {
+    console.log(title.value);
+    if (!title.value || !description.value) {
+      alert('Pls fill up the information');
+      return;
+    }
     const input = {
       input: {
-        startAt: Date.parse(dateTimeStart) / 1000,
+        startAt: Date.parse(datetime) / 1000,
         title: title.value,
         description: description.value,
         eventUserId: attributes.sub,
-        status: 'CREATED'
-      }
+        status: 'CREATED',
+      },
     };
+
     let result = null;
     try {
       result = await API.graphql(graphqlOperation(createEvent, input));
@@ -49,73 +76,63 @@ export default function CreateScreen(props) {
       console.log(e);
     }
 
-    props.navigation.state.params.onGoBack(result.data.createEvent);
+    props.navigation.goBack();
+
     Analytics.record({
       name: 'createdEvent',
       attributes: {
         username: user.username,
         userId: user.attributes.sub,
-        eventId: result.data.createEvent.id
-      }
+        eventId: result.data.createEvent.id,
+      },
     });
-    NavigationService.close();
 
     return result.data;
   };
 
-  function handleDatePicked(datetime) {
-    setDatePickerIsVisible(false);
-    setDateTimeStart(datetime.toUTCString());
-  }
-
   return (
     <Container>
+      <Header>
+        <Left />
+        <Body>
+          <Title>Home</Title>
+        </Body>
+        <Right>
+          <Button transparent onPress={() => props.navigation.goBack()}>
+            <Text>Close</Text>
+          </Button>
+        </Right>
+      </Header>
       <Content>
-        <List>
-          <ListItem>
-            <Body>
-              <Item fixedLabel>
-                <Label>Title</Label>
-                <Input {...title} />
-              </Item>
-            </Body>
-          </ListItem>
-          <ListItem>
-            <Body>
-              <Item fixedLabel>
-                <Label>Description</Label>
-                <Input {...description} />
-              </Item>
-            </Body>
-          </ListItem>
-          <ListItem>
-            <Body>
-              <Item fixedLabel>
-                <Label>Date & Time</Label>
-                <Input
-                  onFocus={() => setDatePickerIsVisible(true)}
-                  value={dateTimeStart}
-                />
-                <DateTimePicker
-                  isVisible={datePickerIsVisible}
-                  onConfirm={handleDatePicked}
-                  onCancel={() => setDatePickerIsVisible(false)}
-                  mode='datetime'
-                />
-              </Item>
-            </Body>
-          </ListItem>
-        </List>
+        <Form>
+          <Item fixedLabel>
+            <Label>Title</Label>
+            <Input {...title} />
+          </Item>
+          <Item fixedLabel>
+            <Label>Description</Label>
+            <Input {...description} />
+          </Item>
+          <Item fixedLabel last>
+            <Label>Date & Time</Label>
+            <Input
+              onFocus={() => showDatePicker()}
+              value={moment(datetime).calendar()}
+            />
+            <DateTimePickerModal
+              isVisible={isDatePickerVisible}
+              mode='datetime'
+              datetime={datetime}
+              onConfirm={handleConfirm}
+              onCancel={hideDatePicker}
+            />
+          </Item>
+        </Form>
+
+        <Button full onPress={() => createNewEvent()}>
+          <Text>Save</Text>
+        </Button>
       </Content>
     </Container>
   );
 }
-
-CreateScreen.navigationOptions = {
-  headerTitle: 'New Event',
-  headerRight: (
-    <Button transparent onPress={() => createNewEvent()}>
-      <Text>Save</Text>
-    </Button>
-  )
-};

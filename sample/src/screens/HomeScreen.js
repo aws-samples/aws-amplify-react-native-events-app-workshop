@@ -1,85 +1,103 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Content, Button, Icon } from 'native-base';
-
-import { getCognitoUser, updateDatabaseUser } from '../utils/users';
-import NavigationService from '../utils/NavigationService';
+import React, { useState, useEffect } from 'react';
+import { RefreshControl } from 'react-native';
+import {
+  Container,
+  Header,
+  Body,
+  Button,
+  Title,
+  Text,
+  Content,
+  Card,
+  CardItem,
+  Left,
+  Right,
+  Icon,
+} from 'native-base';
 
 import { API, graphqlOperation } from 'aws-amplify';
 import Analytics from '@aws-amplify/analytics';
 import { listEvents } from '../graphql/queries';
 
 import EventBox from '../components/EventBox';
+import { getCognitoUser, updateDatabaseUser } from '../utils/users';
 
-export default function HomeScreen() {
-  let user = getCognitoUser();
-  const attributes = user.attributes;
-  updateDatabaseUser(user.username, attributes);
+export default function ({ navigation }) {
   const [events, setEvents] = useState([]);
-  getAllEvents(events, setEvents);
+  const [refreshing, setRefreshing] = useState(true);
 
-  renderEvents = allEvents => {
-    if (allEvents.length > 0)
+  let user = getCognitoUser();
+  updateDatabaseUser(user.username, user.attributes);
+
+  useEffect(() => {
+    getAllEvents();
+  }, []);
+
+  async function getAllEvents() {
+    const input = {
+      filter: {
+        startAt: {
+          ge: parseInt(new Date().getTime() / 1000),
+        },
+      },
+    };
+
+    const allEvents = await API.graphql(graphqlOperation(listEvents, input));
+    // console.log(allEvents.data.listEvents.items);
+    setRefreshing(false);
+    setEvents(allEvents.data.listEvents.items);
+  }
+
+  const renderEvents = () => {
+    if (events.length > 0)
       Analytics.record({
         name: 'loaded',
         attributes: {
-          screen: 'Home'
-        }
+          screen: 'Home',
+        },
       });
-    return allEvents.map(event => (
+    return events.map((event) => (
       <EventBox
         currentUser={user}
         isClickable={true}
         key={event.id}
         event={event}
+        navigation={navigation}
       />
     ));
   };
 
-  getNewEvent = newEvent => {
-    setEvents([newEvent, ...events]);
+  const onRefresh = () => {
+    setRefreshing(true);
+    getAllEvents();
   };
 
   return (
     <Container>
-      <Content padder>{renderEvents(events)}</Content>
+      <Header>
+        <Left />
+        <Body>
+          <Title>Home</Title>
+        </Body>
+        <Right>
+          <Button transparent onPress={() => navigation.navigate('Create')}>
+            <Icon name='add' style={{ padding: 10 }}></Icon>
+          </Button>
+        </Right>
+      </Header>
+      <Content
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            title='Loading'
+          />
+        }
+        padder
+        style={{ alignContent: 'center' }}
+      >
+        {renderEvents(events)}
+      </Content>
     </Container>
   );
-}
-
-HomeScreen.navigationOptions = {
-  headerTitle: 'Home',
-  headerRight: (
-    <Button
-      transparent
-      onPress={() =>
-        NavigationService.navigate('Create', {
-          onGoBack: data => getNewEvent(data)
-        })
-      }
-    >
-      <Icon name='add' style={{ padding: 10 }}></Icon>
-    </Button>
-  )
-};
-
-function getAllEvents(events, setEvents) {
-  let hasUpdate = true;
-  useEffect(() => {
-    fetchEvents();
-  }, hasUpdate);
-
-  const input = {
-    filter: {
-      startAt: {
-        ge: parseInt(new Date().getTime() / 1000)
-      }
-    }
-  };
-
-  fetchEvents = async () => {
-    const allEvents = await API.graphql(graphqlOperation(listEvents, input));
-    setEvents(allEvents.data.listEvents.items);
-  };
-
-  return events;
 }

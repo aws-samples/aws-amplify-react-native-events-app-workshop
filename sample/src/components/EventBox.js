@@ -1,12 +1,9 @@
 import React from 'react';
 import { Body, Text, Card, CardItem } from 'native-base';
-
 import moment from 'moment';
 
-import NavigationService from '../utils/NavigationService';
-
 export default function EventBox(props) {
-  const { event, currentUser, isClickable } = props;
+  let { navigation, event, currentUser, isClickable } = props;
 
   let color = 'black';
   const today = new Date().getTime() / 1000;
@@ -21,8 +18,7 @@ export default function EventBox(props) {
       <CardItem
         button
         onPress={() => {
-          if (isClickable)
-            NavigationService.navigate('Event', { event, currentUser });
+          if (isClickable) navigation.navigate('Event', { event, currentUser });
         }}
       >
         <Body>
