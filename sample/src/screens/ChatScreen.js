@@ -9,20 +9,19 @@ import {
   Right,
   Header,
   Title,
+  Body,
 } from 'native-base';
 
-import { API, graphqlOperation } from 'aws-amplify';
+import { API, graphqlOperation, Auth } from 'aws-amplify';
 import { createChat } from '../graphql/mutations';
 import { onCreateChat } from '../graphql/subscriptions';
+import { useNavigation } from '@react-navigation/native';
 
 export default function ChatScreen(props) {
-  let { event, currentUser } = props.route.params;
-  let { navigation } = props;
+  let { event } = props.route.params;
+  const navigation = useNavigation();
+  let [currentUser, setCurrentUser] = useState(null);
   const [messages, setMessages] = useState([]);
-  const { attributes } = currentUser;
-  const name = attributes.given_name
-    ? `${attributes.given_name} ${attributes.family_name}`
-    : currentUser.username;
   const getChatsByEventQuery = `query GetEvent(
     $id: ID!
     $nextToken: String
@@ -55,6 +54,32 @@ export default function ChatScreen(props) {
     createEventChat(event.id, currentUser.attributes.sub, newMessages[0].text);
   };
 
+  const renderChat = () => {
+    if (currentUser)
+      return (
+        <GiftedChat
+          messages={messages}
+          onSend={(newMessages) => onSend(newMessages)}
+          user={{
+            _id: currentUser.attributes.sub,
+            name: currentUser.attributes.given_name
+              ? `${currentUser.attributes.given_name} ${currentUser.attributes.family_name}`
+              : currentUser.username,
+          }}
+          inverted={true}
+          placeholder='Type a message...'
+        />
+      );
+    return <Text>Loading...</Text>;
+  };
+
+  async function authUser() {
+    const cognitoUser = await Auth.currentAuthenticatedUser();
+    if (cognitoUser) {
+      setCurrentUser(cognitoUser);
+    }
+  }
+
   useEffect(() => {
     const getChatsByEventId = async () => {
       const input = {
@@ -82,6 +107,7 @@ export default function ChatScreen(props) {
   }, [setMessages]);
 
   useEffect(() => {
+    authUser();
     const subscription = API.graphql(graphqlOperation(onCreateChat)).subscribe({
       next: (response) => {
         let newMessageFromResponse = response.value.data.onCreateChat;
@@ -95,7 +121,7 @@ export default function ChatScreen(props) {
         }
       },
       error: (error) => {
-        // console.logq(error);
+        console.error(error);
       },
     });
 
@@ -109,25 +135,18 @@ export default function ChatScreen(props) {
       <Header>
         <Left>
           <Button transparent onPress={() => navigation.goBack()}>
-            <Icon name='ios-arrow-back' style={{ padding: 10 }}></Icon>
+            <Icon name='ios-arrow-back'></Icon>
             <Text>Back</Text>
           </Button>
         </Left>
-        <Title>
-          <Text>Live Chat</Text>
-        </Title>
+        <Body>
+          <Title>
+            <Text>Live Chat</Text>
+          </Title>
+        </Body>
         <Right />
       </Header>
-      <GiftedChat
-        messages={messages}
-        onSend={(newMessages) => onSend(newMessages)}
-        user={{
-          _id: currentUser.attributes.sub,
-          name: name,
-        }}
-        inverted={true}
-        placeholder='Type a message...'
-      />
+      {renderChat()}
     </Container>
   );
 }

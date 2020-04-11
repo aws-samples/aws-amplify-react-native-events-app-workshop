@@ -1,15 +1,15 @@
 import React from 'react';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
 
-import AccountScreen from './Screens/AccountScreen';
-import DetailsScreen from './Screens/DetailsScreen';
-import HomeScreen from './Screens/HomeScreen';
-import EventScreen from './Screens/EventScreen';
-import ChatScreen from './Screens/ChatScreen';
-import CreateScreen from './Screens/CreateScreen';
-import ModalScreen from './Screens/AuthScreen';
+import AccountScreen from './screens/AccountScreen';
+import DetailsScreen from './screens/DetailsScreen';
+import HomeScreen from './screens/HomeScreen';
+import EventScreen from './screens/EventScreen';
+import ChatScreen from './screens/ChatScreen';
+import CreateScreen from './screens/CreateScreen';
+import ModalScreen from './screens/AuthScreen';
 
 const Stack = createStackNavigator();
 const HomeStack = createStackNavigator();

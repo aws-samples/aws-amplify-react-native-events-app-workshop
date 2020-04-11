@@ -9,7 +9,7 @@ function getCognitoUser(bypass = false) {
 
   const fetchUser = async () => {
     const cognitoUser = await Auth.currentAuthenticatedUser({
-      bypassCache: bypass
+      bypassCache: bypass,
     });
     // console.log(cognitoUser);
     setUser(cognitoUser);
@@ -22,35 +22,59 @@ function getCognitoUser(bypass = false) {
   return user;
 }
 
-async function updateDatabaseUser(username, attributes) {
+async function updateDatabaseUser(username, attributes, firsttime = true) {
   if (!username || !attributes) return null;
 
+  const cognitoUser = await Auth.currentAuthenticatedUser();
   const id = attributes.sub;
   const email = attributes.email;
   const phone_number = attributes.phone_number;
   const name = `${attributes.given_name} ${attributes.family_name}`;
   let result = null;
+
+  if (!firsttime) return null;
+
   const input = {
     input: {
       id,
       email,
       username,
       name,
-      phone_number
-    }
+      phone_number,
+    },
   };
+
+  let isNewUser = false;
 
   try {
     result = await API.graphql(graphqlOperation(createUser, input));
+    isNewUser = true;
+    console.log('new user!');
   } catch (e) {
     result = await API.graphql(graphqlOperation(updateUser, input));
+    console.log('existing user!');
   }
 
-  if (email) {
-    updateEndpoint(attributes, 'email');
-  }
-  if (phone_number) {
-    updateEndpoint(attributes, 'phone_number');
+  const pinpointResult = await updateEndpoint(attributes, 'email');
+  // if (isNewUser || email !== cognitoUser.attributes.email) {
+  // console.log('updateEndpoint', email, attributes);
+  // }
+  // if (isNewUser || phone_number !== cognitoUser.attributes.phone_number) {
+  // console.log('updateEndpoint', phone_number, attributes);
+  // pinpointResult = updateEndpoint(attributes, 'phone_number');
+  // }
+
+  if (pinpointResult && pinpointResult.MessageBody?.Message === 'Accepted') {
+    if (isNewUser) {
+      console.log('NewUser');
+      Analytics.record({
+        name: 'NewUser',
+      });
+    }
+    console.log('updateEndpoint');
+    Analytics.record({
+      name: 'updateEndpoint',
+    });
   }
 
   return result.data;
@@ -66,37 +90,44 @@ async function updateEndpoint(
   switch (type) {
     case 'email':
       result = await Analytics.updateEndpoint({
-        ChannelType: 'EMAIL',
-        Address: attributes.email,
-        UserId: attributes.sub,
-        OptOut: 'NONE'
+        channelType: 'EMAIL',
+        address: attributes.email,
+        userId: attributes.sub,
+        optOut: 'NONE',
+        userAttributes: {
+          email: [attributes.email],
+          familyName: [attributes.family_name],
+          givenName: [attributes.given_name],
+          phoneNumber: [attributes.phone_number],
+        },
       });
       break;
-    case 'phone_number':
-      result = await Analytics.updateEndpoint({
-        ChannelType: 'SMS',
-        Address: attributes.phone_number,
-        UserId: attributes.sub,
-        OptOut: 'NONE'
-      });
-      break;
-    case 'push':
-      let channelType = 'APNS';
-      if (isSandbox) {
-        channelType = 'APNS_SANDBOX';
-      }
+    // case 'phone_number':
+    //   result = await Analytics.updateEndpoint({
+    //     ChannelType: 'SMS',
+    //     Address: attributes.phone_number,
+    //     UserId: attributes.sub,
+    //     OptOut: 'NONE',
+    //   });
+    //   break;
+    // case 'push':
+    //   let channelType = 'APNS';
+    //   if (isSandbox) {
+    //     channelType = 'APNS_SANDBOX';
+    //   }
 
-      result = await Analytics.updateEndpoint({
-        ChannelType: channelType,
-        Address: deviceToken,
-        UserId: attributes.sub,
-        OptOut: 'NONE'
-      });
-      break;
+    //   result = await Analytics.updateEndpoint({
+    //     ChannelType: channelType,
+    //     Address: deviceToken,
+    //     UserId: attributes.sub,
+    //     OptOut: 'NONE',
+    //   });
+    //   break;
     default:
-      console.log('wrong channel ', type);
+      console.log('wrong channel ', type, result);
       break;
   }
+
   return result;
 }
 

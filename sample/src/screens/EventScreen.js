@@ -16,51 +16,37 @@ import {
   Title,
 } from 'native-base';
 
-import { API, graphqlOperation } from 'aws-amplify';
+import { API, graphqlOperation, Auth } from 'aws-amplify';
 import { createFollower, deleteFollower } from '../graphql/mutations';
 
 import EventBox from '../components/EventBox';
 
 export default function EventScreen(props) {
-  let { event, currentUser } = props.route.params;
+  let { event } = props.route.params;
   let { navigation } = props;
+  let [currentUser, setCurrentUser] = useState([]);
   let [followers, setFollowers] = useState([]);
   let [follower, setFollower] = useState([]);
   let [pending, setPending] = useState(false);
 
-  // TODO: workshop, insert your graphql query here to get all followers
-  const getFollowersQuery = `query GetEvent(
-    $id: ID!
-    $nextToken: String
-    $limit: Int
-  ) {
-    getEvent(id: $id) {
-      id
-      followers (
-        limit: $limit
-        sortDirection: DESC
-        nextToken: $nextToken
-      ) {
-        items  {
-          id
-          user {
-            id
-            name
-            username
-          }
-        }
-        nextToken
-      }
+  async function authUser() {
+    const cognitoUser = await Auth.currentAuthenticatedUser();
+    if (cognitoUser) {
+      setCurrentUser(cognitoUser);
     }
   }
-  `;
+
+  // TODO: workshop, insert your graphql query here to get all followers
+  const getFollowersQuery = ``;
 
   renderFollowers = () => {
     if (followers.length > 0)
       return followers.map((follower) => (
         <ListItem key={follower.id}>
           <Text>
-            {follower.user.name} (@{follower.user.username})
+            {follower.user.name !== 'undefined undefined'
+              ? follower.user.name + '(@' + follower.user.username + ')'
+              : '@' + follower.user.username}
           </Text>
         </ListItem>
       ));
@@ -177,6 +163,7 @@ export default function EventScreen(props) {
   getAllFollowers(event.id);
 
   useEffect(() => {
+    authUser();
     if (followers.length > 0) {
       const findFollower = followers.find(
         (element) => element.user.id === currentUser.attributes.sub
@@ -195,7 +182,7 @@ export default function EventScreen(props) {
       <Header>
         <Left>
           <Button transparent onPress={() => navigation.goBack()}>
-            <Icon name='ios-arrow-back' style={{ padding: 10 }}></Icon>
+            <Icon name='ios-arrow-back'></Icon>
             <Text>Back</Text>
           </Button>
         </Left>

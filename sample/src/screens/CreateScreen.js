@@ -7,8 +7,6 @@ import {
   Content,
   Button,
   Text,
-  List,
-  ListItem,
   Label,
   Header,
   Left,
@@ -28,10 +26,9 @@ import { API, graphqlOperation } from 'aws-amplify';
 import Analytics from '@aws-amplify/analytics';
 import { createEvent } from '../graphql/mutations';
 
-export default function CreateScreen(props) {
+export default function CreateScreen({ navigation }) {
   const [datetime, setDatetime] = useState();
   const [mode, setMode] = useState('datetime');
-  const [show, setShow] = useState(true);
   const [isDatePickerVisible, setDatePickerVisibility] = useState(false);
 
   const showDatePicker = () => {
@@ -54,7 +51,6 @@ export default function CreateScreen(props) {
   let description = useFormInput();
 
   const createNewEvent = async () => {
-    console.log(title.value);
     if (!title.value || !description.value) {
       alert('Pls fill up the information');
       return;
@@ -76,15 +72,21 @@ export default function CreateScreen(props) {
       console.log(e);
     }
 
-    props.navigation.goBack();
+    navigation.navigate('Home', { refreshList: true });
 
-    Analytics.record({
-      name: 'createdEvent',
-      attributes: {
-        username: user.username,
-        userId: user.attributes.sub,
-        eventId: result.data.createEvent.id,
+    await Analytics.updateEndpoint({
+      userAttributes: {
+        latestEvent: [title.value],
       },
+    }).then(() => {
+      console.log('createdEvent');
+      Analytics.record({
+        name: 'createdEvent',
+        attributes: {
+          username: user.username,
+          userId: user.attributes.sub,
+        },
+      });
     });
 
     return result.data;
@@ -98,7 +100,7 @@ export default function CreateScreen(props) {
           <Title>Home</Title>
         </Body>
         <Right>
-          <Button transparent onPress={() => props.navigation.goBack()}>
+          <Button transparent onPress={() => navigation.goBack()}>
             <Text>Close</Text>
           </Button>
         </Right>
@@ -121,7 +123,7 @@ export default function CreateScreen(props) {
             />
             <DateTimePickerModal
               isVisible={isDatePickerVisible}
-              mode='datetime'
+              mode={mode}
               datetime={datetime}
               onConfirm={handleConfirm}
               onCancel={hideDatePicker}

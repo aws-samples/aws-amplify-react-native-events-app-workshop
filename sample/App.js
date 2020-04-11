@@ -12,6 +12,9 @@ import { withAuthenticator } from 'aws-amplify-react-native';
 import Analytics from '@aws-amplify/analytics';
 
 Amplify.configure(awsconfig);
+Analytics.autoTrack('session', {
+  enable: true,
+});
 
 const getActiveRouteName = (state) => {
   const route = state.routes[state.index];
@@ -21,24 +24,24 @@ const getActiveRouteName = (state) => {
   return route.name;
 };
 
-const loadFonts = async () => {
-  // for native-base
-  await Font.loadAsync({
-    Roboto: require('native-base/Fonts/Roboto.ttf'),
-    Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
-    ...Ionicons.font,
-  });
-};
-
 function App() {
   const [appState, setAppState] = useState(AppState.currentState);
   const [isLoading, setIsLoading] = useState(true);
   const navigationRef = useRef();
   const routeNameRef = useRef();
 
+  const loadFonts = async () => {
+    // for native-base
+    await Font.loadAsync({
+      Roboto: require('native-base/Fonts/Roboto.ttf'),
+      Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
+      ...Ionicons.font,
+    });
+    setIsLoading(!isLoading);
+  };
+
   useEffect(() => {
     loadFonts();
-    setIsLoading(!isLoading);
 
     // app state
     AppState.addEventListener('change', _handleAppStateChange);
