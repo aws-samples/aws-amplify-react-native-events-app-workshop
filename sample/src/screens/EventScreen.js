@@ -37,31 +37,7 @@ export default function EventScreen(props) {
   }
 
   // TODO: workshop, insert your graphql query here to get all followers
-  const getFollowersQuery = `query GetEvent(
-    $id: ID!
-    $nextToken: String
-    $limit: Int
-  ) {
-    getEvent(id: $id) {
-      id
-      followers (
-        limit: $limit
-        sortDirection: DESC
-        nextToken: $nextToken
-      ) {
-        items  {
-          id
-          user {
-            id
-            name
-            username
-          }
-        }
-        nextToken
-      }
-    }
-  }
-  `;
+  const getFollowersQuery = ``;
 
   renderFollowers = () => {
     if (followers.length > 0)
