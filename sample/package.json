@@ -17,7 +17,7 @@
     "@react-native-community/netinfo": "5.5.1",
     "@react-navigation/bottom-tabs": "^5.1.1",
     "@react-navigation/core": "^5.2.1",
-    "@react-navigation/native": "^5.0.9",
+    "@react-navigation/native": "^5.1.5",
     "@react-navigation/stack": "^5.1.1",
     "aws-amplify": "^3.0.6",
     "aws-amplify-react-native": "^4.0.2",
@@ -37,6 +37,7 @@
     "react-native-reanimated": "~1.7.1",
     "react-native-safe-area-context": "0.7.3",
     "react-native-screens": "~2.2.0",
+    "react-native-swipe-list-view": "^2.5.0",
     "react-native-web": "^0.11.7",
     "react-navigation": "^3.12.0"
   },

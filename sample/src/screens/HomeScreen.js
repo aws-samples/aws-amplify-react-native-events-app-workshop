@@ -64,6 +64,8 @@ export default function ({ navigation, route }) {
     setRefreshing(false);
     setEvents(
       allEvents.data.listEvents.items.sort(function (a, b) {
+        if (!a.key) a.key = a.id;
+        if (!b.key) b.key = b.id;
         return a.startAt === b.startAt ? 0 : a.startAt < b.startAt ? -1 : 1;
       })
     );
@@ -96,15 +98,10 @@ export default function ({ navigation, route }) {
           />
         }
         data={events}
-        renderItem={(data, rowMap) => (
-          <EventBox
-            currentUser={user}
-            isClickable={true}
-            key={data.item.id}
-            event={data.item}
-          />
+        renderItem={(rowData) => (
+          <EventBox isClickable={true} event={rowData.item} />
         )}
-        renderHiddenItem={(data, dataMap) => {
+        renderHiddenItem={(rowData) => {
           const disabledButton = () => (
             <Button
               disabled
@@ -119,7 +116,7 @@ export default function ({ navigation, route }) {
               <Button
                 danger
                 style={{ width: 100, justifyContent: 'center' }}
-                onPress={() => deleteEventById(data.item.id)}
+                onPress={() => deleteEventById(rowData.item.id)}
               >
                 <Text>Delete</Text>
               </Button>
@@ -127,7 +124,7 @@ export default function ({ navigation, route }) {
             </Content>
           );
           const renderButton = () => {
-            if (data.item.user.username === user.username)
+            if (rowData.item.user.username === user.username)
               return enabledButton();
             return disabledButton();
           };
@@ -146,6 +143,8 @@ export default function ({ navigation, route }) {
         rightOpenValue={-125}
         style={{ padding: 10 }}
         disableRightSwipe={true}
+        closeOnRowOpen={true}
+        closeOnScroll={true}
       />
     );
   };
