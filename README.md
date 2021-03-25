@@ -68,6 +68,47 @@ And once done, you can now delete your AWS Cloud9 instance.
 
 ![ ](http://bit.ly/aws-react-native-amplify-workshop)
 
+## For future upgrades and debugging references
+
+These are the list of packages installed for the demo app.
+
+```
+yarn add @aws-amplify/core \
+  @aws-amplify/analytics \
+  @react-navigation/native \
+  @react-navigation/stack \ 
+  @react-navigation/bottom-tabs \
+  native-base \
+  aws-amplify-react-native \
+  react-native-swipe-list-view \
+  react-native-gifted-chat \
+  react-native-modal-datetime-picker \
+  moment
+
+expo install react-native-gesture-handler \
+  react-native-reanimated \
+  react-native-screens \
+  react-native-safe-area-context \
+  @react-native-community/masked-view \
+  expo-font \
+  @react-native-community/netinfo \
+  expo-app-loading
+```
+
+When running `npx pod-install`, one error encountered.
+
+![React Native Pod Install Error](img/pod-install-error-1.png)
+![React Native Pod Install Error](img/pod-install-error-2.png)
+
+Make sure you fix it by choosing the respective Command Line Tool in Xcode.
+
+![React Native Pod Install Error](img/xcode-command-line-tool.png)
+
+Re-run `npx pod-install`, you should see the success messages
+
+![React Native Pod Install Error](img/pod-install-success.png)
+
+
 ## License Summary
 
 This sample code is made available under the MIT-0 license. See the LICENSE file.

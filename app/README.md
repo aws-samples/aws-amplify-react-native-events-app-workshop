@@ -61,3 +61,5 @@ Notice that some part of the app might not be working. You are not complete the 
 1. Complete the graphql query events at `src/screens/EventScreen.js`
 
 2. Refer to the original architecture diagram in the main page and figure out how to add Elasticsearch capabilities via AppSync Schema [Annotations](https://aws-amplify.github.io/docs/js/api#using-graphql-transformers).
+
+3. Replace all GraphQL APIs with [Amplify DataStore](https://docs.amplify.aws/lib/datastore/data-access/q/platform/js#query-data) for app's offline capabilities.
