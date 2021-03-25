@@ -1,6 +1,7 @@
 import React from 'react';
-import { createStackNavigator, TransitionSpecs } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { getFocusedRouteNameFromRoute } from '@react-navigation/native';
 import { Ionicons } from '@expo/vector-icons';
 
 import AccountScreen from './screens/AccountScreen';
@@ -28,9 +29,7 @@ const Tab = createBottomTabNavigator();
 // }
 
 function shouldHeaderBeShown(route) {
-  const routeName = route.state
-    ? route.state.routes[route.state.index].name
-    : 'HomeTab';
+  const routeName = getFocusedRouteNameFromRoute(route) ?? 'HomeTab';
 
   switch (routeName) {
     // case 'HomeTab':

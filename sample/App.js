@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { AppState } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import AppContainer from './src/AppContainer';
-import { AppLoading } from 'expo';
+import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -37,7 +37,8 @@ function App() {
       Roboto_medium: require('native-base/Fonts/Roboto_medium.ttf'),
       ...Ionicons.font,
     });
-    setIsLoading(!isLoading);
+    let timeout = setIsLoading(!isLoading);
+    return () => clearTimeout(timeout);
   };
 
   useEffect(() => {
@@ -83,25 +84,20 @@ function App() {
   return (
     <NavigationContainer
       ref={navigationRef}
-      onStateChange={(state) => {
+      onStateChange={ async() => {
         const previousRouteName = routeNameRef.current;
-        if (state) {
-          const currentRouteName = getActiveRouteName(state);
+        const currentRouteName = navigationRef.current.getCurrentRoute().name;
 
-          if (
-            !previousRouteName !== currentRouteName &&
-            appState === 'active'
-          ) {
-            console.log('tracking current screen:', currentRouteName);
+        if (previousRouteName !== currentRouteName) {
+          console.log('tracking current screen:', currentRouteName);
             Analytics.record({
               name: 'Navigate',
               attributes: {
                 screen: currentRouteName,
               },
             });
-          }
-          routeNameRef.current = currentRouteName;
         }
+
       }}
     >
       {isLoading ? <AppLoading /> : <AppContainer />}
